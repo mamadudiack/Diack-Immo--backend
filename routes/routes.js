@@ -7,6 +7,8 @@ router.post('/properties', createProperty)
 
 router.get('/properties', getProperties)
 
+router.get('/property:id', getProperties)
+
 router.put('/properties:id', updateProperty)
 
 router.delete('/propertie:id', deleteProperty)

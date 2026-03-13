@@ -94,5 +94,5 @@ res.status(500).json({message:error.message})
 
 }
 module.exports ={
-createProperty,getProperties,updateProperty,deleteProperty
+createProperty,getProperties,getProperties,updateProperty,deleteProperty
 }
