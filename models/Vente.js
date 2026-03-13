@@ -27,13 +27,9 @@ const venteSchema = new mongoose.Schema({
     saleDate:{
         type:Date,
         default:Date.now
-    },
-
-    paymentMethod:{
-        type:String,
-        enum:['cash','bank','mobile']
     }
-
-});
+},
+{timestamps:true}
+);
 
 module.exports = mongoose.model('Location',venteSchema);
