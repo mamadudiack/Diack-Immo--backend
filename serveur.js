@@ -7,7 +7,7 @@ const cors = require('cors')
  require('./config/db')
 //creation d'une instance de l'application express
 //importation des routes
-//const personRoutes  = require('./routes/routes')
+const Routes  = require('./routes/routes')
 const app = express();
 
 
@@ -25,7 +25,7 @@ app.get('/', (req,res) => {
 res.send('hello world')
 })
 //utilisation des routes 
-//app.use('/api', personRoutes);
+app.use('/api', Routes);
 
 app.listen(PORT, () => {
     console.log(` Serveur running on port ${PORT}`)
