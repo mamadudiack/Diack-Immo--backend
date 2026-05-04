@@ -14,13 +14,13 @@ const propertySchema = new mongoose.Schema({
 
     type:{
         type:String,
-        enum:['maison','appartement','terrain'],
+        enum:['maison','appartement'],
         required:true
     },
 
     status:{
         type:String,
-        enum:['a_vendre','a_louer','vendu','loué'],
+        enum:['a_vendre','a_louer','vendu','loue'],
         default:'a_vendre'
     },
 
@@ -39,19 +39,16 @@ const propertySchema = new mongoose.Schema({
     },
 
     city:{
-        type:String
+        type:String,
+        required:true
     },
 
-    images:[
-        {
-            type:String
+    image: {
+            type:String,
         }
-    ],
+    
 
-    agent:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User'
-    }
+ 
 
 },
 {timestamps:true}

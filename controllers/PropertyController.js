@@ -1,98 +1,220 @@
 const Property = require('../models/Property')
+const cloudinary = require('../config/cloudinary')
 
 
-// CREATE
- const createProperty = async (req,res) => {
+
+
+// CREATE PROPERTY
+const createProperty = async (req, res) => {
 
 try {
 
-       const property = await Property.create(req.body)
+const { title, description, type, status, price, surface, address, city, image } = req.body;
 
-        res.status(201).json(property)
+// créer un nouveau bien
+const newProperty = await Property.create({
+         title,
+         description,
+         type,
+         status,
+         price,
+         surface,
+         address,
+         city,
+         image
+         
+});
+
+return res.status(201).json({
+message: "Bien créé avec succès",
+property: newProperty
+});
 
 } catch (error) {
 
-     res.status(500).json({message:error.message})
+console.error("Erreur lors de la création :", error);
+
+return res.status(500).json({
+message: "Erreur serveur"
+});
 
 }
 
-}
+};
 
 
-// GET ALL
-const getProperties = async (req,res) => {
+
+// GET ALL PROPERTIES
+const getProperties = async (req, res) => {
 
 try {
 
-const properties = await Property.find().populate('agent')
+const properties = await Property.find()     //.populate('client');
 
-res.json(properties)
+return res.status(200).json({
+message: "Biens récupérés avec succès",
+properties
+});
 
 } catch (error) {
 
-res.status(500).json({message:error.message})
+console.error("Erreur serveur :", error);
+
+return res.status(500).json({
+message: "Erreur serveur"
+});
 
 }
 
-}
+};
 
 
-// GET ONE
-const getProperty = async (req,res) => {
+
+// GET PROPERTY BY ID
+const getPropertyById = async (req, res) => {
 
 try {
 
-const property = await Property.findById(req.params.id)
+const { id } = req.params;
 
-res.json(property)
+const property = await Property.findById(id);
+
+if (!property) {
+
+return res.status(404).json({
+message: "Bien non trouvé"
+});
+
+}
+
+return res.status(200).json({
+message: "Bien récupéré avec succès",
+property
+});
 
 } catch (error) {
 
-res.status(500).json({message:error.message})
+console.error("Erreur serveur :", error);
+
+return res.status(500).json({
+message: "Erreur serveur"
+});
 
 }
 
-}
+};
 
 
-// UPDATE
-const updateProperty = async (req,res) => {
+
+// UPDATE PROPERTY
+const updateProperty = async (req, res) => {
 
 try {
+
+const { id } = req.params;
+
+const { title, description, type, status, price, surface, address, city, image } = req.body;
 
 const property = await Property.findByIdAndUpdate(
-req.params.id,
-req.body,
-{new:true}
-)
+id,
+   { 
+    title,
+    description,
+    type,
+    status,
+    price,
+    surface,
+    address,
+    city,
+    image
+   
+     },
+{ new: true }
+);
 
-res.json(property)
+if (!property) {
+
+return res.status(404).json({
+message: "Bien non trouvé"
+});
+
+}
+
+return res.status(200).json({
+message: "Bien mis à jour avec succès",
+property
+});
 
 } catch (error) {
 
-res.status(500).json({message:error.message})
+console.error("Erreur serveur :", error);
+
+return res.status(500).json({
+message: "Erreur serveur"
+});
 
 }
 
-}
+};
 
 
-// DELETE
-const deleteProperty = async (req,res) => {
+
+// DELETE PROPERTY
+const deleteProperty = async (req, res) => {
 
 try {
 
-await Property.findByIdAndDelete(req.params.id)
+const { id } = req.params;
 
-res.json({message:"Property deleted"})
+const property = await Property.findByIdAndDelete(id);
+
+if (!property) {
+
+return res.status(404).json({
+message: "Bien non trouvé"
+});
+
+}
+
+// Supprimer l'image Cloudinary si elle existe
+if (property.image) {
+  try {
+    // Extraire le publicId de l'URL Cloudinary
+    const urlParts = property.image.split('/');
+    const fileName = urlParts[urlParts.length - 1];
+    const publicId = `properties/${fileName.split('.')[0]}`;
+
+    await cloudinary.uploader.destroy(publicId);
+    console.log(`Image supprimée de Cloudinary: ${publicId}`);
+  } catch (cloudinaryError) {
+    console.error("Erreur suppression image Cloudinary:", cloudinaryError);
+    // Ne pas échouer la suppression pour autant
+  }
+}
+
+return res.status(200).json({
+message: "Bien supprimé avec succès"
+});
 
 } catch (error) {
 
-res.status(500).json({message:error.message})
+console.error("Erreur serveur :", error);
+
+return res.status(500).json({
+message: "Erreur serveur"
+});
 
 }
 
-}
-module.exports ={
-createProperty,getProperties,getProperties,updateProperty,deleteProperty
-}
+};
+
+
+module.exports = {
+createProperty,
+getProperties,
+getPropertyById,
+updateProperty,
+deleteProperty
+};
+
+

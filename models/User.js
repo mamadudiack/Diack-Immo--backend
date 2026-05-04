@@ -26,11 +26,15 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+     clientType:{
+        type:String,
+        enum:['acheteur','locataire']
+    },
 
     role:{
         type:String,
-        enum:['admin','agent'],
-        default:'agent'
+        enum:['admin','client'],
+        default:'client'
     }
 
    
